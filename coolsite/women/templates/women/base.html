@@ -42,7 +42,7 @@
 			<li><a href="{% url 'home' %}"> Все категории</a></li>
 		{% endif %}
 
-		{% show_categories '-name' cat_selected %}  <!--включающий тег -->
+		{% show_categories 'id' cat_selected %}  <!--включающий тег -->
 
 		<li class="share">
 		<p> Наш канал</p>

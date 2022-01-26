@@ -1,0 +1,18 @@
+{% extends 'women/base.html' %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+<form action="{% url 'add_page'%}" method="post">
+    {% csrf_token%} <!-- токен для проверки формы на оригинальность -->
+<!--    {{ form.as_p }}вызывается тег <p> -->
+    <div class="form-error">{{ form.non_field_errors }}</div><!--ловит совпадения для выдачи ошибки-->
+
+    {% for f in form %}
+    <p><label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}:</label>{{ f }} </p> <!--создаем ярлыки-->
+    <div class="form-error">{{ f.errors }}</div>
+    {% endfor %}
+
+    <button type="submit">Добавить</button>
+</form>
+{% endblock%}
