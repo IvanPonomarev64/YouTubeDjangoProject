@@ -42,8 +42,17 @@
 			<li><a href="{% url 'home' %}"> Все категории</a></li>
 		{% endif %}
 
-		{% show_categories 'id' cat_selected %}  <!--включающий тег -->
+		{# show_categories 'id' cat_selected #}  <!--включающий тег -->
 
+		{% for cat in cats %}
+			{% if cat.women__count > 0 %} <!--если в категории есть запись отображаетм имя категории-->
+				{% if cat.pk == cat_selected %}
+					<li class="selected">{{cat.name}}</li>
+				{% else %}
+				<li><a href="{{ cat.get_absolute_url }}">{{cat.name}}</a> </li>
+				{% endif %}
+			{% endif %}
+		{% endfor %}
 		<li class="share">
 		<p> Наш канал</p>
 		<a class="share-yt" href="https://www.youtube.com/channel/UClJzWfGWuGJL2t-3dYKcHTA/playlists"
