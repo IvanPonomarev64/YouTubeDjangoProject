@@ -10,6 +10,8 @@ menu = [{'title': 'О сайте', 'url_name': 'about'},
 
 
 class DataMixin:
+    paginate_by = 1
+
     def get_user_context(self, **kwargs: object) -> object:
         context = kwargs
         cats = Category.objects.annotate(Count('women'))
