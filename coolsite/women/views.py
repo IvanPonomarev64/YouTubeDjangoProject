@@ -1,14 +1,12 @@
 from django.contrib.auth import logout, login
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http.response import HttpResponse, HttpResponseNotFound
+from django.contrib.auth.views import LoginView
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
-from django.contrib.auth.views import LoginView
 
 from .forms import *
-from .models import *
 from .utils import *
 
 
@@ -24,7 +22,7 @@ class WomenHome(DataMixin, ListView):
         return dict(list(context.items()) + list(c_def.items()))
 
     def get_queryset(self):
-        return Women.objects.filter(is_published=True)  # отображаем только опубликованные статьи
+        return Women.objects.filter(is_published=True).select_related('cat')  # отображаем только опубликованные статьи
 
 
 # def index(request):
@@ -36,24 +34,24 @@ class WomenHome(DataMixin, ListView):
 #                }
 #     return render(request, 'women/index.html', context=context)
 
-# @login_required  # теперь о сайте доступно только для зареганных
+# @login_required теперь о сайте доступно только для зареганных
 def about(request):
     return render(request, 'women/about.html', {'menu': menu, 'title': 'О сайте'})
 
 
-def categories(request, catid):
-    print(request.POST)
-    return HttpResponse(f"<h1>Статьи по категориям<h1><p>{catid}</p>")
+# def categories(request, catid):
+#     print(request.POST)
+#     return HttpResponse(f"<h1>Статьи по категориям<h1><p>{catid}</p>")
 
 
-def archive(request, year):
-    if int(year) > 2020:
-        return redirect('home', permanent=False)
-    return HttpResponse(f"<h1>Архив по годам</h1><p>{year}</p>")
+# def archive(request, year):
+#     if int(year) > 2020:
+#         return redirect('home', permanent=False)
+#     return HttpResponse(f"<h1>Архив по годам</h1><p>{year}</p>")
 
 
-def page_not_found(request, exception):
-    return HttpResponseNotFound('<h1>Страница не найдена</h1>')
+# def page_not_found(request, exception):
+#     return HttpResponseNotFound('<h1>Страница не найдена</h1>')
 
 
 class AddPage(LoginRequiredMixin, DataMixin, CreateView):
@@ -123,7 +121,7 @@ class WomenCategory(DataMixin, ListView):
     allow_empty = False  # при переходе на несуществующую категорию будет выдавать 404
 
     def get_queryset(self):
-        return Women.objects.filter(cat__slug=self.kwargs['slug'], is_published=True)
+        return Women.objects.filter(cat__slug=self.kwargs['slug'], is_published=True).select_related('cat')
 
     def get_context_data(self, *, object_list=None, **kwargs):  # для динамического и статического контекста
         context = super().get_context_data(**kwargs)
