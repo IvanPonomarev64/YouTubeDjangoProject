@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, FormView
 
 from .forms import *
 from .utils import *
@@ -84,9 +84,19 @@ class AddPage(LoginRequiredMixin, DataMixin, CreateView):
 #     return render(request, 'women/addpage.html', context)
 
 
-def contact(request):
-    return HttpResponse("Обратная связь")
+class ContactFormView(DataMixin, FormView):
+    form_class = ContactForm
+    template_name = 'women/contact.html'
+    success_url = reverse_lazy('home')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title='Обратная связь')
+        return dict(list(context.items()) + list(c_def.items()))
+
+    def form_valid(self, form):
+        print(form.cleaned_data)  # возвращает введеные данные
+        return redirect('home')
 
 # def login(request):
 #     return HttpResponse("Авторизация")
